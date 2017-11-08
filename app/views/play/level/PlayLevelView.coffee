@@ -160,7 +160,7 @@ module.exports = class PlayLevelView extends RootView
   onLevelLoaded: (e) ->
     return if @destroyed
     if _.all([
-      (me.isStudent() or me.isTeacher()),
+      ((me.isStudent() and !application.getHocCampaign()) or me.isTeacher()),
       not @courseID,
       not e.level.isType('course-ladder')
 

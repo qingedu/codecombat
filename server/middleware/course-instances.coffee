@@ -5,6 +5,7 @@ database = require '../commons/database'
 mongoose = require 'mongoose'
 AnalyticsLogEvent = require '../models/AnalyticsLogEvent'
 TrialRequest = require '../models/TrialRequest'
+Campaign = require '../models/Campaign'
 CourseInstance = require '../models/CourseInstance'
 Classroom = require '../models/Classroom'
 Course = require '../models/Course'
@@ -203,6 +204,25 @@ module.exports =
     query = {$and: [{name: {$ne: 'Single Player'}}, {hourOfCode: {$ne: true}}]}
     courseInstances = yield CourseInstance.find(query, { members: 1, ownerID: 1}).lean()
     res.status(200).send(courseInstances)
+
+  fetchStudentHocReplacement: wrap (req, res) ->
+    startTime = new Date()
+    userID = mongoose.Types.ObjectId(req.query.userID)
+    campaignSlug = req.query.campaignSlug
+    # campaignSlug -> campaignID
+    campaign = yield Campaign.findOne({ slug: campaignSlug })
+    campaignID = campaign.get('_id')
+    # campaignID -> courseID
+    course = yield Course.findOne({ campaignID })
+    courseID = course.get('_id')
+    # userID -> classroom list -> classroomID (pick arbitrarily)
+    classroom = yield Classroom.findOne({ members: userID })
+    # classroomID, courseID -> student's courseInstance for 'intro'
+    courseInstance = yield CourseInstance.findOne({
+      classroomID: classroom.get('_id'),
+      courseID: course.get('_id')
+    })
+    res.status(200).send({ courseInstanceID: courseInstance.get('_id') })
 
   fetchMyCourseLevelSessions: wrap (req, res) ->
     courseInstance = yield database.getDocFromHandle(req, CourseInstance)

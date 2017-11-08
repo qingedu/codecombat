@@ -146,7 +146,7 @@ if view.showAds()
                 button.btn.btn-warning.btn.btn-lg.btn-illustrated.view-solutions(data-level-slug=level.slug)
                   span(data-i18n="leaderboard.scores")
               
-              if me.isStudent() && me.get('courseInstances') && me.get('courseInstances').length
+              if view.shouldShow('classroom-level-play-button')
                 .course-version.hidden(data-level-original=level.original)
                   button.btn.btn-primary.btn.btn-lg.btn-block.btn-illustrated
                     span(data-i18n="common.play") Play

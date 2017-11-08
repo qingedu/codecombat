@@ -41,6 +41,7 @@ BuyGemsModal = require 'views/play/modal/BuyGemsModal'
 ContactModal = require 'views/core/ContactModal'
 require('vendor/scripts/jquery-ui-1.11.1.custom')
 require('vendor/styles/jquery-ui-1.11.1.custom.css')
+fetchJson = require 'core/api/fetch-json'
 
 require 'lib/game-libraries'
 
@@ -105,6 +106,17 @@ module.exports = class CampaignView extends RootView
     @levelDifficultyMap = {}
 
     if utils.getQueryVariable('hour_of_code')
+      if me.isStudent()
+        if @terrain is 'dungeon'
+          newCampaign = 'intro'
+          fetchJson("/db/course_instance/student-hoc-replacement", {
+            data: {
+              userID: me.id
+              campaignSlug: 'intro'
+            }
+          }).then ({ courseInstanceID }) =>
+            application.router.navigate("/play/#{newCampaign}?course-instance=#{courseInstanceID}", { trigger: true, replace: true })
+          return
       me.set('hourOfCode', true)
       me.patch()
       pixelCode = switch @terrain
@@ -1230,6 +1242,9 @@ module.exports = class CampaignView extends RootView
     isStudent = me.get('role') in ['student']
     isIOS = me.get('iosIdentifierForVendor') || application.isIPadApp
 
+    if what is 'classroom-level-play-button'
+      return me.isStudent() and not application.getHocCampaign() and me.get('courseInstances')?.length
+
     if features.codePlay and what in ['clans', 'settings']
       return false
 
@@ -1252,7 +1267,7 @@ module.exports = class CampaignView extends RootView
       return !isStudent
 
     if what in ['back-to-classroom']
-      return isStudent
+      return isStudent and not application.getHocCampaign()
 
     if what in ['buy-gems']
       return not (isIOS or me.freeOnly() or isStudent)
