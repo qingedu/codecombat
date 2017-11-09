@@ -106,7 +106,7 @@ module.exports = class CampaignView extends RootView
     @levelDifficultyMap = {}
 
     if utils.getQueryVariable('hour_of_code')
-      if me.isStudent()
+      if me.isStudent() or me.isTeacher()
         if @terrain is 'dungeon'
           newCampaign = 'intro'
           fetchJson("/db/course_instance/student-hoc-replacement", {
@@ -124,6 +124,10 @@ module.exports = class CampaignView extends RootView
         when 'game-dev-hoc-2' then 'code_combat_gamedev2'
         else 'code_combat'
       $('body').append($("<img src='https://code.org/api/hour/begin_#{pixelCode}.png' style='visibility: hidden;'>"))
+    else if me.isTeacher() and not utils.getQueryVariable('course-instance') and not application.getHocCampaign()
+      # redirect teachers away from home campaigns
+      application.router.navigate('/teachers', { trigger: true, replace: true })
+      return
     else if location.pathname is '/paypal/subscribe-callback'
       @payPalToken = utils.getQueryVariable('token')
       api.users.executeBillingAgreement({userID: me.id, token: @payPalToken})
@@ -1239,11 +1243,13 @@ module.exports = class CampaignView extends RootView
     return true
 
   shouldShow: (what) ->
-    isStudent = me.get('role') in ['student']
+    isStudentOrTeacher = me.isStudent() or me.isTeacher()
     isIOS = me.get('iosIdentifierForVendor') || application.isIPadApp
 
     if what is 'classroom-level-play-button'
-      return me.isStudent() and not application.getHocCampaign() and me.get('courseInstances')?.length
+      isValidStudent = (me.isStudent() and me.get('courseInstances')?.length) 
+      isValidTeacher = me.isTeacher()
+      return (isValidStudent or isValidTeacher) and not application.getHocCampaign()
 
     if features.codePlay and what in ['clans', 'settings']
       return false
@@ -1255,24 +1261,24 @@ module.exports = class CampaignView extends RootView
       return !me.finishedAnyLevels() && serverConfig.showCodePlayAds && !features.noAds && me.get('role') isnt 'student'
 
     if what in ['status-line']
-      return !isStudent
+      return !isStudentOrTeacher
 
     if what in ['gems']
-      return !isStudent
+      return !isStudentOrTeacher
 
     if what in ['level', 'xp']
-      return !isStudent
+      return !isStudentOrTeacher
 
     if what in ['settings', 'leaderboard', 'back-to-campaigns', 'poll', 'items', 'heros', 'achievements', 'clans', 'poll']
-      return !isStudent
+      return !isStudentOrTeacher
 
     if what in ['back-to-classroom']
-      return isStudent and not application.getHocCampaign()
+      return isStudentOrTeacher and not application.getHocCampaign()
 
     if what in ['buy-gems']
-      return not (isIOS or me.freeOnly() or isStudent)
+      return not (isIOS or me.freeOnly() or isStudentOrTeacher)
 
     if what in ['premium']
-      return not (me.isPremium() or isIOS or me.freeOnly() or isStudent)
+      return not (me.isPremium() or isIOS or me.freeOnly() or isStudentOrTeacher)
 
     return true

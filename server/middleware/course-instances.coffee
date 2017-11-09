@@ -222,6 +222,17 @@ module.exports =
       classroomID: classroom.get('_id'),
       courseID: course.get('_id')
     })
+
+    classrooms = yield Classroom.find(if req.user.isStudent() then {members: userID} else {ownerID: userID}).select({_id:1,ownderID:1})
+    classroomIds = (classroom._id for classroom in classrooms)
+    # classroomID, courseID -> student's courseInstance for 'intro'
+    query = {
+      classroomID: {$in: classroomIds}
+      courseID: course.get('_id')
+    }
+    if req.user.isStudent()
+      query.members = req.user._id
+    courseInstance = yield CourseInstance.findOne(query)
     res.status(200).send({ courseInstanceID: courseInstance.get('_id') })
 
   fetchMyCourseLevelSessions: wrap (req, res) ->
