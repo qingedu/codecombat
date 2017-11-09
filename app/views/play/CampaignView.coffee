@@ -1185,6 +1185,9 @@ module.exports = class CampaignView extends RootView
   maybeShowPendingAnnouncement: () ->
     return false if me.freeOnly() # TODO: handle announcements that can be shown to free only servers
     return false if @payPalToken
+    return false if me.isStudent()
+    return false if application.getHocCampaign()
+    return false if me.get('hourOfCode')
     latest = window.serverConfig.latestAnnouncement
     myLatest = me.get('lastAnnouncementSeen')
     return unless typeof latest is 'number'
