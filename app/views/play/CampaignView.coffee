@@ -109,13 +109,14 @@ module.exports = class CampaignView extends RootView
       if me.isStudent() or me.isTeacher()
         if @terrain is 'dungeon'
           newCampaign = 'intro'
-          fetchJson("/db/course_instance/student-hoc-replacement", {
-            data: {
-              userID: me.id
-              campaignSlug: 'intro'
-            }
-          }).then ({ courseInstanceID }) =>
-            application.router.navigate("/play/#{newCampaign}?course-instance=#{courseInstanceID}", { trigger: true, replace: true })
+          api.users.getCourseInstances({ userID: me.id, campaignSlug: newCampaign }, { data: { project: '_id' } })
+          .then (courseInstances) =>
+            if courseInstances.length
+              courseInstanceID = _.first(courseInstances)._id
+              application.router.navigate("/play/#{newCampaign}?course-instance=#{courseInstanceID}", { trigger: true, replace: true })
+            else
+              application.router.navigate((if me.isStudent() then '/students' else '/teachers'), {trigger: true, replace: true})
+              noty({text: 'Please create or join a classroom first', layout: 'topCenter', timeout: 8000, type: 'success'})
           return
       me.set('hourOfCode', true)
       me.patch()

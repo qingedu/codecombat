@@ -701,28 +701,6 @@ describe 'POST /db/course_instance/-/recent', ->
     expect(res.statusCode).toBe(403)
     done()
 
-describe 'GET /db/course_instance/student-hoc-replacement', ->
-  url = getURL('/db/course_instance/student-hoc-replacement')
-
-  beforeEach utils.wrap ->
-    @campaignSlug = 'intro'
-    @student = yield utils.initUser({ role: 'student' })
-    @admin = yield utils.initAdmin()
-    yield utils.loginUser(@admin)
-    @campaign = yield utils.makeCampaign({ name: 'Intro' })
-    @campaign2 = yield utils.makeCampaign({ name: 'Computer Science 2' })
-    @course = yield utils.makeCourse({free: true, releasePhase: 'released'}, { @campaign })
-    @teacher = yield utils.initUser({ role: 'teacher' })
-    yield utils.loginUser(@teacher)
-    @classroom = yield utils.makeClassroom({}, { members: [@student] })
-    @courseInstance = yield utils.makeCourseInstance({}, { @course, @classroom, members: [@student] })
-    yield utils.loginUser(@student)
-
-  it "returns a corresponding courseInstance for the classroom version's course", utils.wrap ->
-    [res, body] = yield request.getAsync(url+"?userID=#{@student.id}&campaignSlug=#{@campaignSlug}", { json: true })
-    expect(body.courseInstanceID).toBeDefined()
-    expect(body.courseInstanceID).toBe(@courseInstance.get('_id')+'')
-
 describe 'GET /db/course_instance/:handle/my-course-level-sessions', ->
 
   beforeEach utils.wrap (done) ->

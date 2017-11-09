@@ -205,36 +205,6 @@ module.exports =
     courseInstances = yield CourseInstance.find(query, { members: 1, ownerID: 1}).lean()
     res.status(200).send(courseInstances)
 
-  fetchStudentHocReplacement: wrap (req, res) ->
-    startTime = new Date()
-    userID = mongoose.Types.ObjectId(req.query.userID)
-    campaignSlug = req.query.campaignSlug
-    # campaignSlug -> campaignID
-    campaign = yield Campaign.findOne({ slug: campaignSlug })
-    campaignID = campaign.get('_id')
-    # campaignID -> courseID
-    course = yield Course.findOne({ campaignID })
-    courseID = course.get('_id')
-    # userID -> classroom list -> classroomID (pick arbitrarily)
-    classroom = yield Classroom.findOne({ members: userID })
-    # classroomID, courseID -> student's courseInstance for 'intro'
-    courseInstance = yield CourseInstance.findOne({
-      classroomID: classroom.get('_id'),
-      courseID: course.get('_id')
-    })
-
-    classrooms = yield Classroom.find(if req.user.isStudent() then {members: userID} else {ownerID: userID}).select({_id:1,ownderID:1})
-    classroomIds = (classroom._id for classroom in classrooms)
-    # classroomID, courseID -> student's courseInstance for 'intro'
-    query = {
-      classroomID: {$in: classroomIds}
-      courseID: course.get('_id')
-    }
-    if req.user.isStudent()
-      query.members = req.user._id
-    courseInstance = yield CourseInstance.findOne(query)
-    res.status(200).send({ courseInstanceID: courseInstance.get('_id') })
-
   fetchMyCourseLevelSessions: wrap (req, res) ->
     courseInstance = yield database.getDocFromHandle(req, CourseInstance)
     if not courseInstance
