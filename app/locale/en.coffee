@@ -117,6 +117,8 @@
 
   play:
     play_as: "Play As"  # Ladder page
+    get_course_for_class: "Get this course for your actual class!"
+    request_licenses: "Request licenses."
     compete: "Compete!" # Course details page
     spectate: "Spectate"  # Ladder page
     players: "players"  # Hover over a level on /play

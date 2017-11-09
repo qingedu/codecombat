@@ -13,6 +13,13 @@ if view.showAds()
       script.
         (adsbygoogle = window.adsbygoogle || []).push({});
 
+  
+if showGameDevAlert
+  #game-dev-hoc-license-alert.alert.alert-success
+    span(data-i18n="play.get_course_for_class")
+    =" "
+    a(href="/teachers/licenses", data-i18n="play.request_licenses")
+  
 // TODO: .gameplay-container causes world map buttons to briefly appear in top left of screen
 .gameplay-container
   if features.codePlay

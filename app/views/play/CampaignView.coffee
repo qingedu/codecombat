@@ -451,6 +451,9 @@ module.exports = class CampaignView extends RootView
           else if _.isArray(ac.showIfUnlocked)
             _.find(@campaigns.models, id: acID)?.locked = false if _.intersection(ac.showIfUnlocked, me.levels()).length > 0
 
+    if @terrain and _.string.contains(@terrain, 'hoc') and me.isTeacher()
+      context.showGameDevAlert = true
+
     context
 
   afterRender: ->
