@@ -407,6 +407,7 @@ module.exports = class CampaignView extends RootView
     context.requiresSubscription = @requiresSubscription
     context.editorMode = @editorMode
     context.adjacentCampaigns = _.filter _.values(_.cloneDeep(@campaign?.get('adjacentCampaigns') or {})), (ac) =>
+      return false if me.isStudent() or me.isTeacher()
       if ac.showIfUnlocked and not @editorMode
         return false if _.isString(ac.showIfUnlocked) and ac.showIfUnlocked not in me.levels()
         return false if _.isArray(ac.showIfUnlocked) and _.intersection(ac.showIfUnlocked, me.levels()).length <= 0
