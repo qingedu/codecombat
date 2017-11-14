@@ -5,7 +5,7 @@ require('coffee-script');
 require('coffee-script/register');
 
 _ = require 'lodash'
-sendwithus = require '../../server/sendwithus'
+sendwithmailer = require '../../server/sendwithmailer'
 log = require 'winston'
 str = require 'underscore.string'
 co = require 'co'
@@ -71,7 +71,7 @@ exports.run = ->
           })
           console.log "\tChange name '#{oldUsername}' => '#{newUsername}'"
           context =
-            template: sendwithus.templates.plain_text_email
+            template: sendwithmailer.templates.plain_text_email
             recipient:
               address: user.get('email')
             sender:
@@ -82,7 +82,7 @@ exports.run = ->
               contentHTML: content
           user.set('name': newUsername)
           yield user.save()
-          yield sendwithus.api.sendAsync(context)
+          yield sendwithmailer.api.sendAsync(context)
 #          return
 
 

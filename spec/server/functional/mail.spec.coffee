@@ -1,7 +1,7 @@
 require '../common'
 utils = require '../utils'
 mail = require '../../../server/routes/mail'
-sendwithus = require '../../../server/sendwithus'
+sendwithmailer = require '../../../server/sendwithmailer'
 User = require '../../../server/models/User'
 request = require '../request'
 LevelSession = require '../../../server/models/LevelSession'
@@ -60,7 +60,7 @@ describe 'sendNextStepsEmail', ->
       state: complete: true
     }).save()
 
-    spyOn(sendwithus.api, 'send').and.callFake (options, cb) ->
+    spyOn(sendwithmailer.api, 'send').and.callFake (options, cb) ->
       expect(options.recipient.address).toBe(user.get('email'))
       cb()
       done()

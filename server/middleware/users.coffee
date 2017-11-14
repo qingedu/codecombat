@@ -9,7 +9,7 @@ parse = require '../commons/parse'
 request = require 'request'
 mongoose = require 'mongoose'
 database = require '../commons/database'
-sendwithus = require '../sendwithus'
+sendwithmailer = require '../sendwithmailer'
 User = require '../models/User'
 Classroom = require '../models/Classroom'
 CourseInstance = require '../models/CourseInstance'
@@ -169,14 +169,14 @@ module.exports =
     if not user.get('email')
       throw new errors.UnprocessableEntity('User must have an email address to receive a verification email')
     context =
-      email_id: sendwithus.templates.verify_email
+      email_id: sendwithmailer.templates.verify_email
       recipient:
         address: user.get('email')
         name: user.broadName()
       email_data:
         name: user.broadName()
         verify_link: makeHostUrl(req, "/user/#{user._id}/verify/#{user.verificationCode(timestamp)}")
-    sendwithus.api.send context, (err, result) ->
+    sendwithmailer.api.send context, (err, result) ->
     res.status(200).send({})
 
   getStudents: wrap (req, res, next) ->

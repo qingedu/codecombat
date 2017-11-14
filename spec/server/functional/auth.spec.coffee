@@ -5,7 +5,7 @@ _ = require 'lodash'
 Promise = require 'bluebird'
 nock = require 'nock'
 request = require '../request'
-sendwithus = require '../../../server/sendwithus'
+sendwithmailer = require '../../../server/sendwithmailer'
 mongoose = require 'mongoose'
 LevelSession = require '../../../server/models/LevelSession'
 OAuthProvider = require '../../../server/models/OAuthProvider'
@@ -112,14 +112,14 @@ describe 'POST /auth/reset', ->
     done()
 
   it 'resets the user password', utils.wrap (done) ->
-    spyOn(sendwithus.api, 'send').and.callFake (options, cb) ->
+    spyOn(sendwithmailer.api, 'send').and.callFake (options, cb) ->
       expect(options.recipient.address).toBe('some@email.com')
       cb()
     [res, body] = yield request.postAsync(
       {uri: urlReset, json: {email: 'some@email.com'}}
     )
     expect(res.statusCode).toBe(200)
-    expect(sendwithus.api.send).toHaveBeenCalled()
+    expect(sendwithmailer.api.send).toHaveBeenCalled()
     user = yield User.findById(@user.id)
     passwordReset = user.get('passwordReset')
     expect(passwordReset).toBeTruthy()
@@ -132,7 +132,7 @@ describe 'POST /auth/reset', ->
     done()
     
   it 'resetting password is not idempotent', utils.wrap (done) ->
-    spyOn(sendwithus.api, 'send').and.callFake (options, cb) ->
+    spyOn(sendwithmailer.api, 'send').and.callFake (options, cb) ->
       expect(options.recipient.address).toBe('some@email.com')
       cb()
     [res, body] = yield request.postAsync(

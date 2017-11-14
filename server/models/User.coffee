@@ -19,7 +19,7 @@ mailChimp = require '../lib/mail-chimp'
 config = require '../../server_config'
 stripe = require('../lib/stripe_utils').api
 
-sendwithus = require '../sendwithus'
+sendwithmailer = require '../sendwithmailer'
 
 UserSchema = new mongoose.Schema({
   dateCreated:
@@ -359,7 +359,7 @@ UserSchema.statics.unconflictNameAsync = Promise.promisify(unconflictName)
 UserSchema.methods.sendWelcomeEmail = (req) ->
   return if not @get('email')
   return if core_utils.isSmokeTestEmail(@get('email'))
-  { welcome_email_student, welcome_email_user } = sendwithus.templates
+  { welcome_email_student, welcome_email_user } = sendwithmailer.templates
   timestamp = (new Date).getTime()
   data =
     email_id: if @isStudent() then welcome_email_student else welcome_email_user
@@ -370,8 +370,8 @@ UserSchema.methods.sendWelcomeEmail = (req) ->
       name: @broadName()
       verify_link: makeHostUrl(req, "/user/#{@_id}/verify/#{@verificationCode(timestamp)}")
       teacher: @isTeacher()
-  sendwithus.api.send data, (err, result) ->
-    log.error "sendwithus post-save error: #{err}, result: #{result}" if err
+  sendwithmailer.api.send data, (err, result) ->
+    log.error "sendwithmailer post-save error: #{err}, result: #{result}" if err
 
 UserSchema.methods.hasSubscription = ->
   if payPal = @get('payPal')

@@ -11,7 +11,7 @@ Prepaid = require '../../../server/models/Prepaid'
 request = require '../request'
 facebook = require '../../../server/lib/facebook'
 gplus = require '../../../server/lib/gplus'
-sendwithus = require '../../../server/sendwithus'
+sendwithmailer = require '../../../server/sendwithmailer'
 Promise = require 'bluebird'
 Achievement = require '../../../server/models/Achievement'
 EarnedAchievement = require '../../../server/models/EarnedAchievement'
@@ -907,7 +907,7 @@ describe 'POST /db/user/:handle/signup-with-password', ->
     yield new Promise((resolve) -> setTimeout(resolve, 10))
 
   it 'signs up the user with the password and sends welcome emails', utils.wrap ->
-    spyOn(sendwithus.api, 'send')
+    spyOn(sendwithmailer.api, 'send')
     user = yield utils.becomeAnonymous()
     url = getURL("/db/user/#{user.id}/signup-with-password")
     email = 'some@email.com'
@@ -918,8 +918,8 @@ describe 'POST /db/user/:handle/signup-with-password', ->
     updatedUser = yield User.findById(user.id)
     expect(updatedUser.get('email')).toBe(email)
     expect(updatedUser.get('passwordHash')).toBeDefined()
-    expect(sendwithus.api.send).toHaveBeenCalled()
-    context = sendwithus.api.send.calls.argsFor(0)[0]
+    expect(sendwithmailer.api.send).toHaveBeenCalled()
+    context = sendwithmailer.api.send.calls.argsFor(0)[0]
     expect(_.str.startsWith(context.email_data.verify_link, "https://codecombat.com/user/#{user.id}/verify/")).toBe(true)
     
 
@@ -1057,7 +1057,7 @@ describe 'POST /db/user/:handle/signup-with-facebook', ->
 
   it 'signs up the user with the facebookID and sends welcome emails', utils.wrap ->
     spyOn(facebook, 'fetchMe').and.returnValue(validFacebookResponse)
-    spyOn(sendwithus.api, 'send')
+    spyOn(sendwithmailer.api, 'send')
     user = yield utils.becomeAnonymous()
     url = getURL("/db/user/#{user.id}/signup-with-facebook")
     json = { name, email: facebookEmail, facebookID, facebookAccessToken: '...' }
@@ -1067,11 +1067,11 @@ describe 'POST /db/user/:handle/signup-with-facebook', ->
     expect(updatedUser.get('name')).toBe(name)
     expect(updatedUser.get('email')).toBe(facebookEmail)
     expect(updatedUser.get('facebookID')).toBe(facebookID)
-    expect(sendwithus.api.send).toHaveBeenCalled()
+    expect(sendwithmailer.api.send).toHaveBeenCalled()
 
   it 'signs up nameless user with the facebookID', utils.wrap ->
     spyOn(facebook, 'fetchMe').and.returnValue(validFacebookResponse)
-    spyOn(sendwithus.api, 'send')
+    spyOn(sendwithmailer.api, 'send')
     user = yield utils.becomeAnonymous()
     url = getURL("/db/user/#{user.id}/signup-with-facebook")
     json = { email: facebookEmail, facebookID, facebookAccessToken: '...' }
@@ -1156,7 +1156,7 @@ describe 'POST /db/user/:handle/signup-with-gplus', ->
 
   it 'signs up the user with the gplusID and sends welcome emails', utils.wrap ->
     spyOn(gplus, 'fetchMe').and.returnValue(validGPlusResponse)
-    spyOn(sendwithus.api, 'send')
+    spyOn(sendwithmailer.api, 'send')
     user = yield utils.becomeAnonymous()
     url = getURL("/db/user/#{user.id}/signup-with-gplus")
     json = { name, email: gplusEmail, gplusID, gplusAccessToken: '...' }
@@ -1166,11 +1166,11 @@ describe 'POST /db/user/:handle/signup-with-gplus', ->
     expect(updatedUser.get('name')).toBe(name)
     expect(updatedUser.get('email')).toBe(gplusEmail)
     expect(updatedUser.get('gplusID')).toBe(gplusID)
-    expect(sendwithus.api.send).toHaveBeenCalled()
+    expect(sendwithmailer.api.send).toHaveBeenCalled()
 
   it 'signs up nameless user with the gplusID', utils.wrap ->
     spyOn(gplus, 'fetchMe').and.returnValue(validGPlusResponse)
-    spyOn(sendwithus.api, 'send')
+    spyOn(sendwithmailer.api, 'send')
     user = yield utils.becomeAnonymous()
     url = getURL("/db/user/#{user.id}/signup-with-gplus")
     json = { email: gplusEmail, gplusID, gplusAccessToken: '...' }
@@ -1446,15 +1446,15 @@ describe 'POST /db/user/:userID/verify/:verificationCode', ->
   
 describe 'POST /db/user/:userID/request-verify-email', ->
   beforeEach utils.wrap ->
-    spyOn(sendwithus.api, 'send')
+    spyOn(sendwithmailer.api, 'send')
     @user = yield utils.initUser()
     @url = utils.getURL("/db/user/#{@user.id}/request-verify-email")
     
   it 'sends an email with a verification link to the user', utils.wrap ->
     [res, body] = yield request.postAsync({ @url, json: true, headers: {'x-forwarded-proto': 'http'} })
     expect(res.statusCode).toBe(200)
-    expect(sendwithus.api.send).toHaveBeenCalled()
-    context = sendwithus.api.send.calls.argsFor(0)[0]
+    expect(sendwithmailer.api.send).toHaveBeenCalled()
+    context = sendwithmailer.api.send.calls.argsFor(0)[0]
     expect(_.str.startsWith(context.email_data.verify_link, "http://localhost:3001/user/#{@user.id}/verify/")).toBe(true)
 
 

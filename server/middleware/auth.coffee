@@ -10,7 +10,7 @@ User = require '../models/User'
 utils = require '../lib/utils'
 mongoose = require 'mongoose'
 authentication = require 'passport'
-sendwithus = require '../sendwithus'
+sendwithmailer = require '../sendwithmailer'
 LevelSession = require '../models/LevelSession'
 config = require '../../server_config'
 oauth = require '../lib/oauth'
@@ -262,15 +262,15 @@ module.exports =
     user.set('passwordReset', utils.getCodeCamel())
     yield user.save()
     context =
-      email_id: sendwithus.templates.password_reset
+      email_id: sendwithmailer.templates.password_reset
       recipient:
         address: req.body.email
       email_data:
         tempPassword: user.get('passwordReset')
     try
-      yield sendwithus.api.sendAsync(context)
+      yield sendwithmailer.api.sendAsync(context)
     catch err
-      log.error("auth/reset sendwithus error: #{JSON.stringify(err)}\n#{JSON.stringify(context)}")
+      log.error("auth/reset sendwithmailer error: #{JSON.stringify(err)}\n#{JSON.stringify(context)}")
     res.end()
 
   unsubscribe: wrap (req, res) ->

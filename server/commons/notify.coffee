@@ -1,5 +1,5 @@
 slack = require '../slack'
-sendwithus = require '../sendwithus'
+sendwithmailer = require '../sendwithmailer'
 User = require '../models/User'
 
 # TODO: Refactor notification (slack, watcher emails) logic here
@@ -23,7 +23,7 @@ module.exports =
         for watcher in watchers
           continue if not watcher.get('email')
           context =
-            email_id: sendwithus.templates.change_made_notify_watcher
+            email_id: sendwithmailer.templates.change_made_notify_watcher
             recipient:
               address: watcher.get('email')
               name: watcher.get('name')
@@ -32,5 +32,5 @@ module.exports =
               submitter_name: req.user.get('name') or '???'
               doc_link: if editPath then docLink else null
               commit_message: doc.get('commitMessage')
-          sendwithus.api.send context, _.noop
+          sendwithmailer.api.send context, _.noop
      

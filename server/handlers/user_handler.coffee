@@ -22,7 +22,7 @@ UserRemark = require './../models/UserRemark'
 {findStripeSubscription} = require '../lib/utils'
 {isID} = require '../lib/utils'
 slack = require '../slack'
-sendwithus = require '../sendwithus'
+sendwithmailer = require '../sendwithmailer'
 Prepaid = require '../models/Prepaid'
 UserPollsRecord = require '../models/UserPollsRecord'
 EarnedAchievement = require '../models/EarnedAchievement'
@@ -416,9 +416,9 @@ UserHandler = class UserHandler extends Handler
       return @sendBadInputError res, "Unknown one-time email type #{type}"
 
     sendMail = (emailParams) =>
-      sendwithus.api.send emailParams, (err, result) =>
+      sendwithmailer.api.send emailParams, (err, result) =>
         if err
-          log.error "sendwithus one-time email error: #{err}, result: #{result}"
+          log.error "sendwithmailer one-time email error: #{err}, result: #{result}"
           return @sendError res, 500, 'send mail failed.'
         req.user.update {$push: {"emails.oneTimes": {type: type, email: email, sent: new Date()}}}, (err) =>
           return @sendDatabaseError(res, err) if err
@@ -440,9 +440,9 @@ UserHandler = class UserHandler extends Handler
 
     # Type-specific email data
     if type is 'subscribe modal parent'
-      emailParams['email_id'] = sendwithus.templates.parent_subscribe_email
+      emailParams['email_id'] = sendwithmailer.templates.parent_subscribe_email
     else if type is 'share progress modal parent'
-      emailParams['email_id'] = sendwithus.templates.share_progress_email
+      emailParams['email_id'] = sendwithmailer.templates.share_progress_email
 
     sendMail emailParams
 

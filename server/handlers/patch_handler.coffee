@@ -5,7 +5,7 @@ schema = require '../../app/schemas/models/patch'
 {handlers} = require '../commons/mapping'
 mongoose = require 'mongoose'
 log = require 'winston'
-sendwithus = require '../sendwithus'
+sendwithmailer = require '../sendwithmailer'
 slack = require '../slack'
 
 PatchHandler = class PatchHandler extends Handler
@@ -49,7 +49,7 @@ PatchHandler = class PatchHandler extends Handler
     return if not watcher.get('email')
     # return if watcher._id is patchCreator._id
     context =
-      email_id: sendwithus.templates.patch_created
+      email_id: sendwithmailer.templates.patch_created
       recipient:
         address: watcher.get('email')
         name: watcher.get('name')
@@ -58,7 +58,7 @@ PatchHandler = class PatchHandler extends Handler
         submitter_name: patchCreator.get('name') or '???'
         doc_link: docLink
         commit_message: patch.get('commitMessage')
-    sendwithus.api.send context, (err, result) ->
+    sendwithmailer.api.send context, (err, result) ->
 
   sendPatchCreatedSlackMessage: (options) ->
     message = "#{options.creator.get('name')} submitted a patch to #{options.target.get('name')}: #{options.patch.get('commitMessage')} #{options.docLink}"

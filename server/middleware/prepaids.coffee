@@ -18,7 +18,7 @@ Promise.promisifyAll(StripeUtils)
 moment = require 'moment'
 slack = require '../slack'
 delighted = require '../delighted'
-sendwithus = require '../sendwithus'
+sendwithmailer = require '../sendwithmailer'
 
 { STARTER_LICENSE_COURSE_IDS } = require '../../app/core/constants'
 {formatDollarValue} = require '../../app/core/utils'
@@ -149,7 +149,7 @@ module.exports =
     result = yield Prepaid.update(query, update)
     
     context =
-      email_id: sendwithus.templates.share_licenses_joiner
+      email_id: sendwithmailer.templates.share_licenses_joiner
       recipient:
         address: joiner.get('email')
         name: joiner.broadName()
@@ -157,7 +157,7 @@ module.exports =
         joiner_email: joiner.get('email')
         creator_email: req.user.get('email')
         creator_name: req.user.broadName()
-    sendwithus.api.send context, (err, result) ->
+    sendwithmailer.api.send context, (err, result) ->
     
     res.status(201).send(prepaid.toObject({req}))
   

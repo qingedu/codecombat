@@ -5,7 +5,7 @@ errors = require './errors'
 log = require 'winston'
 Patch = require '../models/Patch'
 User = require '../models/User'
-sendwithus = require '../sendwithus'
+sendwithmailer = require '../sendwithmailer'
 slack = require '../slack'
 deltasLib = require '../../app/core/deltas'
 
@@ -479,7 +479,7 @@ module.exports = class Handler
   notifyWatcherOfChange: (editor, watcher, changedDocument, editPath) ->
     return if not watcher.get('email')
     context =
-      email_id: sendwithus.templates.change_made_notify_watcher
+      email_id: sendwithmailer.templates.change_made_notify_watcher
       recipient:
         address: watcher.get('email')
         name: watcher.get('name')
@@ -488,7 +488,7 @@ module.exports = class Handler
         submitter_name: editor.get('name') or '???'
         doc_link: if editPath then "http://codecombat.com#{editPath}" else null # TODO: Dynamically generate URL with server/commons/urls.makeHostUrl
         commit_message: changedDocument.get('commitMessage')
-    sendwithus.api.send context, (err, result) ->
+    sendwithmailer.api.send context, (err, result) ->
 
   sendChangedSlackMessage: (options) ->
     message = "#{options.creator.get('name')} saved a change to #{options.target.get('name')}: #{options.target.get('commitMessage') or '(no commit message)'} #{options.docLink}"

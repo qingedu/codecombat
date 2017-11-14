@@ -86,6 +86,13 @@ config.mail =
   cronHandlerPublicIP: process.env.COCO_CRON_PUBLIC_IP or ''
   cronHandlerPrivateIP: process.env.COCO_CRON_PRIVATE_IP or ''
 
+config.smtp =
+  service: process.env.COCO_MAIL_SMTP_SERVICE or ''
+  addr: process.env.COCO_MAIL_SMTP_ADDR or ''
+  port: process.env.COCO_MAIL_SMTP_PORT or 465
+  username: process.env.COCO_MAIL_SMTP_USERNAME or ''
+  password: process.env.COCO_MAIL_SMTP_PASSWORD or ''
+
 config.hipchat =
   main: process.env.COCO_HIPCHAT_API_KEY or ''
   tower: process.env.COCO_HIPCHAT_TOWER_API_KEY or ''

@@ -1,7 +1,7 @@
 config = require '../../server_config'
 log = require 'winston'
 User = require '../models/User'
-sendwithus = require '../sendwithus'
+sendwithmailer = require '../sendwithmailer'
 async = require 'async'
 moment = require 'moment'
 LevelSession = require '../models/LevelSession'
@@ -17,10 +17,10 @@ module.exports.setup = (app) ->
       if (req.body.licensesNeeded or req.user.isTeacher()) and subject.indexOf('Level Load Error:') < 0
         closeIO.getSalesContactEmail fromAddress, (err, salesContactEmail, userID, leadID) ->
           if not leadID
-            log.debug "No close.io lead found for #{fromAddress}; sending license request via sendwithus"
+            log.debug "No close.io lead found for #{fromAddress}; sending license request via sendwithmailer"
             createSendWithUsLicenseRequestContext req, fromAddress, salesContactEmail, subject, content, (err, context) ->
-              sendwithus.api.send context, (err, result) ->
-                log.error "Error sending license request form email via sendwithus: #{err.message or err}" if err
+              sendwithmailer.api.send context, (err, result) ->
+                log.error "Error sending license request form email via sendwithmailer: #{err.message or err}" if err
                 req.user.update({$set: { enrollmentRequestSent: true }}).exec(_.noop)
             return res.end()
           return log.error("Error getting sales contact for #{fromAddress}: #{err.message or err}") if err
@@ -36,8 +36,8 @@ module.exports.setup = (app) ->
                   req.user.update({$set: { enrollmentRequestSent: true }}).exec(_.noop)
       else
         createSendWithUsContext req, fromAddress, subject, content, (context) ->
-          sendwithus.api.send context, (err, result) ->
-            log.error "Error sending contact form email via sendwithus: #{err.message or err}" if err
+          sendwithmailer.api.send context, (err, result) ->
+            log.error "Error sending contact form email via sendwithmailer: #{err.message or err}" if err
     return res.end()
 
 createMailContent = (req, fromAddress, done) ->
@@ -66,7 +66,7 @@ createMailContent = (req, fromAddress, done) ->
 createSendWithUsLicenseRequestContext = (req, fromAddress, salesContactEmail, subject, content, done) ->
   user = req.user
   context =
-    email_id: sendwithus.templates.plain_text_email
+    email_id: sendwithmailer.templates.plain_text_email
     recipient:
       address: salesContactEmail
     sender:
@@ -87,14 +87,14 @@ createSendWithUsContext = (req, fromAddress, subject, content, done) ->
   teacher = user?.isTeacher()
 
   if teacher or req.body.licensesNeeded
-    return done("Tried to send a teacher contact us email via sendwithus #{fromAddress} #{subject}")
+    return done("Tried to send a teacher contact us email via sendwithmailer #{fromAddress} #{subject}")
 
   toAddress = switch
     when premium then config.mail.supportPremium
     else config.mail.supportPrimary
 
   context =
-    email_id: sendwithus.templates.plain_text_email
+    email_id: sendwithmailer.templates.plain_text_email
     recipient:
       address: toAddress
     sender:

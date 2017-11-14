@@ -461,9 +461,9 @@ describe 'POST /db/classroom/:id/invite-members', ->
     classroom = yield utils.makeClassroom()
     url = classroomsURL + "/#{classroom.id}/invite-members"
     data = { emails: ['test@test.com'] }
-    sendwithus = require '../../../server/sendwithus'
-    spyOn(sendwithus.api, 'send').and.callFake (context, cb) -> 
-      expect(context.email_id).toBe(sendwithus.templates.course_invite_email)
+    sendwithmailer = require '../../../server/sendwithmailer'
+    spyOn(sendwithmailer.api, 'send').and.callFake (context, cb) -> 
+      expect(context.email_id).toBe(sendwithmailer.templates.course_invite_email)
       expect(context.recipient.address).toBe('test@test.com')
       expect(context.email_data.teacher_name).toBe('Mr Professerson')
       expect(context.email_data.join_link).toBe('https://codecombat.com/students?_cc='+classroom.get('codeCamel'))

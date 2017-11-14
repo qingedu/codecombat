@@ -453,9 +453,9 @@ describe 'POST /db/article/:handle/new-version', ->
 
   
   it 'notifies watchers of changes', utils.wrap (done) ->
-    sendwithus = require '../../../server/sendwithus'
-    spyOn(sendwithus.api, 'send').and.callFake (context, cb) ->
-      expect(context.email_id).toBe(sendwithus.templates.change_made_notify_watcher)
+    sendwithmailer = require '../../../server/sendwithmailer'
+    spyOn(sendwithmailer.api, 'send').and.callFake (context, cb) ->
+      expect(context.email_id).toBe(sendwithmailer.templates.change_made_notify_watcher)
       expect(context.recipient.address).toBe('test@gmail.com')
       done()
     user = yield User({email: 'test@gmail.com', name: 'a user'}).save()

@@ -16,7 +16,7 @@ LevelSession = require '../models/LevelSession'
 User = require '../models/User'
 CourseInstance = require '../models/CourseInstance'
 TrialRequest = require '../models/TrialRequest'
-sendwithus = require '../sendwithus'
+sendwithmailer = require '../sendwithmailer'
 co = require 'co'
 delighted = require '../delighted'
 subscriptions = require './subscriptions'
@@ -309,7 +309,7 @@ module.exports =
     for email in req.body.emails
       joinCode = (classroom.get('codeCamel') or classroom.get('code'))
       context =
-        email_id: sendwithus.templates.course_invite_email
+        email_id: sendwithmailer.templates.course_invite_email
         recipient:
           address: email
         email_data:
@@ -317,7 +317,7 @@ module.exports =
           class_name: classroom.get('name')
           join_link: makeHostUrl(req, '/students?_cc=' + joinCode)
           join_code: joinCode
-      sendwithus.api.send context, _.noop
+      sendwithmailer.api.send context, _.noop
 
     res.status(200).send({})
 

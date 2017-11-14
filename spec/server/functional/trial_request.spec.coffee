@@ -7,7 +7,7 @@ TrialRequest = require '../../../server/models/TrialRequest'
 Prepaid = require '../../../server/models/Prepaid'
 request = require '../request'
 delighted = require '../../../server/delighted'
-sendwithus = require '../../../server/sendwithus'
+sendwithmailer = require '../../../server/sendwithmailer'
 
 fixture = {
   type: 'subscription'
@@ -97,14 +97,14 @@ describe 'POST /db/trial.request', ->
     yield utils.loginUser(@user)
     json = _.cloneDeep(fixture)
     json.properties.marketingReferrer = 'sunburst'
-    spyOn(sendwithus.api, 'send')
+    spyOn(sendwithmailer.api, 'send')
     [res, body] = yield request.postAsync(getURL('/db/trial.request'), { json })
     expect(res.statusCode).toBe(201)
     expect(body._id).toBeDefined()
     @trialRequest = yield TrialRequest.findById(body._id)
     expect(@trialRequest.get('properties').marketingReferrer).toBe('sunburst')
-    expect(sendwithus.api.send.calls.count()).toBe(1)
-    expect(sendwithus.api.send.calls.argsFor(0)[0].email_id).toBe(sendwithus.templates.sunburst_referral)
+    expect(sendwithmailer.api.send.calls.count()).toBe(1)
+    expect(sendwithmailer.api.send.calls.argsFor(0)[0].email_id).toBe(sendwithmailer.templates.sunburst_referral)
     done()
     
 describe 'GET /db/trial.request', ->

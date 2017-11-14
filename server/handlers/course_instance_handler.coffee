@@ -12,7 +12,7 @@ User = require '../models/User'
 UserHandler = require './user_handler'
 utils = require '../../app/core/utils'
 {objectIdFromTimestamp} = require '../lib/utils'
-sendwithus = require '../sendwithus'
+sendwithmailer = require '../sendwithmailer'
 mongoose = require 'mongoose'
 
 CourseInstanceHandler = class CourseInstanceHandler extends Handler
@@ -145,7 +145,7 @@ CourseInstanceHandler = class CourseInstanceHandler extends Handler
           return @sendForbiddenError(res) unless prepaid.get('maxRedeemers') > prepaid.get('redeemers').length
           for email in req.body.emails
             context =
-              email_id: sendwithus.templates.course_invite_email
+              email_id: sendwithmailer.templates.course_invite_email
               recipient:
                 address: email
               subject: course.get('name')
@@ -153,7 +153,7 @@ CourseInstanceHandler = class CourseInstanceHandler extends Handler
                 teacher_name: req.user.broadName()
                 class_name: course.get('name')
                 join_link: "https://codecombat.com/courses/students?_ppc=" + prepaid.get('code')
-            sendwithus.api.send context, _.noop
+            sendwithmailer.api.send context, _.noop
           return @sendSuccess(res, {})
 
   redeemPrepaidCodeAPI: (req, res) ->

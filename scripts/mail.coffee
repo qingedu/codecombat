@@ -6,7 +6,7 @@ do (setupLodash = this) ->
 async = require 'async'
 
 serverSetup = require '../server_setup'
-sendwithus = require '../server/sendwithus'
+sendwithmailer = require '../server/sendwithmailer'
 User = require '../server/models/User'
 Level = require '../server/models/Level'
 LevelSession = require '../server/models/LevelSession'
@@ -92,7 +92,7 @@ emailUserInitialRecruiting = (user, callback) ->
   team = user.session.levelInfo.team
   team = team.substr(0, team.length - 1)
   context =
-    email_id: sendwithus.templates.recruiting_email
+    email_id: sendwithmailer.templates.recruiting_email
     recipient:
       address: if DEBUGGING then 'nick@codecombat.com' else user.email
       name: name
@@ -101,8 +101,8 @@ emailUserInitialRecruiting = (user, callback) ->
       level_name: user.session.levelInfo.name
       place: "##{user.session.rank}"  # like '#31'
       level_race: team
-      ladder_link: "http://codecombat.com/play/ladder/#{user.session.levelInfo.slug}"
-  sendwithus.api.send context, (err, result) ->
+      ladder_link: "https://codecombat.club/play/ladder/#{user.session.levelInfo.slug}"
+  sendwithmailer.api.send context, (err, result) ->
     return callback err if err
     callback null, user
 
@@ -136,7 +136,7 @@ emailUserTournamentResults = (winner, callback) ->
   name = winner.name
   team = winner.team.substr(0, winner.team.length - 1)
   context =
-    email_id: sendwithus.templates.greed_tournament_rank
+    email_id: sendwithmailer.templates.greed_tournament_rank
     recipient:
       address: if DEBUGGING then 'nick@codecombat.com' else winner.email
       name: name
@@ -149,13 +149,13 @@ emailUserTournamentResults = (winner, callback) ->
       losses: winner.losses
       rank: winner.rank
       team_name: team
-      ladder_url: 'http://codecombat.com/play/ladder/greed#winners'
+      ladder_url: 'https://codecombat.club/play/ladder/greed#winners'
       top3: winner.rank <= 3
       top5: winner.rank <= 5
       top10: winner.rank <= 10
       top40: winner.rank <= 40
       top100: winner.rank <= 100
-  sendwithus.api.send context, (err, result) ->
+  sendwithmailer.api.send context, (err, result) ->
     return callback err if err
     callback null, winner
 

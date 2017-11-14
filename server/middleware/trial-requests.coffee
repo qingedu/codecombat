@@ -8,7 +8,7 @@ mongoose = require 'mongoose'
 TrialRequest = require '../models/TrialRequest'
 User = require '../models/User'
 delighted = require '../delighted'
-sendwithus = require '../sendwithus'
+sendwithmailer = require '../sendwithmailer'
 
 module.exports =
   post: wrap (req, res) ->
@@ -32,12 +32,12 @@ module.exports =
     trialRequest = yield trialRequest.save()
     if trialRequest.get('properties')?.marketingReferrer is 'sunburst'
       context =
-        email_id: sendwithus.templates.sunburst_referral
+        email_id: sendwithmailer.templates.sunburst_referral
         recipient:
           address: config.sunburst.email
         email_data:
           trial_request: trialRequest.toJSON()
-      sendwithus.api.send context, _.noop
+      sendwithmailer.api.send context, _.noop
     res.status(201).send(trialRequest.toObject({req: req}))
 
   put: wrap (req, res) ->

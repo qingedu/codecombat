@@ -5,7 +5,7 @@ require('coffee-script');
 require('coffee-script/register');
 
 _ = require 'lodash'
-sendwithus = require '../../server/sendwithus'
+sendwithmailer = require '../../server/sendwithmailer'
 log = require 'winston'
 str = require 'underscore.string'
 co = require 'co'
@@ -129,7 +129,7 @@ exports.run = ->
       })
   
       context =
-        template: sendwithus.templates.plain_text_email
+        template: sendwithmailer.templates.plain_text_email
         recipient:
           address: oldUsername
         sender:
@@ -145,7 +145,7 @@ exports.run = ->
           { address: oldEmail }
         ]
   
-      yield sendwithus.api.sendAsync(context)
+      yield sendwithmailer.api.sendAsync(context)
   
     return 'Done'
 

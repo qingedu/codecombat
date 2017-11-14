@@ -8,7 +8,7 @@ config = require '../../server_config'
 LevelSession = require '../models/LevelSession'
 Level = require '../models/Level'
 log = require 'winston'
-sendwithus = require '../sendwithus'
+sendwithmailer = require '../sendwithmailer'
 wrap = require 'co-express'
 
 if config.isProduction and config.redis.host isnt 'localhost'
@@ -125,7 +125,7 @@ sendReminderEmailToCandidate = (candidate, sendEmailCallback) ->
       email_data:
         new_company: employersAfterCount
         company_name: "CodeCombat"
-        user_profile: "http://codecombat.com/account/profile/#{candidate._id}"
+        user_profile: "https://codecombat.club/account/profile/#{candidate._id}"
         recipient_address: encodeURIComponent(candidate.email)
     #log.info "Sending #{@timeRange.name} update reminder to #{context.recipient.name}(#{context.recipient.address})"
     newSentMail =
@@ -136,7 +136,7 @@ sendReminderEmailToCandidate = (candidate, sendEmailCallback) ->
         updated: candidate.jobProfile.updated
     MailSent.create newSentMail, (err) ->
       if err? then return sendEmailCallback err
-      sendwithus.api.send context, (err, result) ->
+      sendwithmailer.api.send context, (err, result) ->
         log.error "Error sending candidate update reminder email: #{err} with result #{result}" if err
         sendEmailCallback null
 ### End Approved Candidate Update Reminder Task ###
@@ -218,7 +218,7 @@ sendReminderEmailToUnapprovedCandidate = (candidate, sendEmailCallback) ->
       address: candidate.email
       name: candidate.jobProfile.name
     email_data:
-      user_profile: "http://codecombat.com/account/profile/#{candidate._id}"
+      user_profile: "https://codecombat.club/account/profile/#{candidate._id}"
       recipient_address: encodeURIComponent(candidate.email)
   #log.info "Sending #{@timeRange.name} finish profile reminder to #{context.recipient.name}(#{context.recipient.address})"
   newSentMail =
@@ -229,7 +229,7 @@ sendReminderEmailToUnapprovedCandidate = (candidate, sendEmailCallback) ->
       updated: candidate.jobProfile.updated
   MailSent.create newSentMail, (err) ->
     if err? then return sendEmailCallback err
-    sendwithus.api.send context, (err, result) ->
+    sendwithmailer.api.send context, (err, result) ->
       log.error "Error sending candidate finish profile reminder email: #{err} with result #{result}" if err
       sendEmailCallback null
 ### End Unapproved Candidate Finish Reminder Task ###
@@ -289,7 +289,7 @@ sendInternalCandidateUpdateReminder = (candidate, cb) ->
       address: "team@codecombat.com"
       name: "The CodeCombat Team"
     email_data:
-      new_candidate_profile: "http://codecombat.com/account/profile/#{candidate._id}"
+      new_candidate_profile: "https://codecombat.club/account/profile/#{candidate._id}"
   #log.info "Sending candidate updated reminder for #{candidate.jobProfile.name}"
   newSentMail =
     mailTask: @mailTaskName
@@ -299,7 +299,7 @@ sendInternalCandidateUpdateReminder = (candidate, cb) ->
 
   MailSent.create newSentMail, (err) ->
     if err? then return cb err
-    sendwithus.api.send context, (err, result) ->
+    sendwithmailer.api.send context, (err, result) ->
       log.error "Error sending interal candidate update email: #{err} with result #{result}" if err
       cb null
 
@@ -398,7 +398,7 @@ sendEmployerNewCandidatesAvailableEmail = (employer, cb) ->
       user: employer._id
     MailSent.create newSentMail, (err) ->
       if err? then return cb err
-      sendwithus.api.send context, (err, result) ->
+      sendwithmailer.api.send context, (err, result) ->
         log.error "Error sending employer candidates available email: #{err} with result #{result}" if err
         cb null
 
@@ -484,7 +484,7 @@ sendUserRemarkTaskEmail = (task, cb) ->
         email_data:
           task_text: task.action
           candidate_name: user.jobProfile?.name ? "(Name not listed in job profile)"
-          candidate_link: "http://codecombat.com/account/profile/#{task.user}"
+          candidate_link: "https://codecombat.club/account/profile/#{task.user}"
           due_date: task.date
       #log.info "Sending recruitment task reminder to #{contact.email}"
       newSentMail =
@@ -496,7 +496,7 @@ sendUserRemarkTaskEmail = (task, cb) ->
           date: task.date
       MailSent.create newSentMail, (err) ->
         if err? then return cb err
-        sendwithus.api.send context, (err, result) ->
+        sendwithmailer.api.send context, (err, result) ->
           log.error "Error sending #{mailTaskName} to #{contact.email}: #{err} with result #{result}" if err
           cb null
 
@@ -596,7 +596,7 @@ sendLadderUpdateEmail = (session, now, daysAgo) ->
     sendEmail = (defeatContext, victoryContext, levelVersionsContext) ->
       # TODO: do something with the preferredLanguage?
       context =
-        email_id: sendwithus.templates.ladder_update_email
+        email_id: sendwithmailer.templates.ladder_update_email
         recipient:
           address: if DEBUGGING then 'nick@codecombat.com' else user.get('email')
           name: name
@@ -610,17 +610,17 @@ sendLadderUpdateEmail = (session, now, daysAgo) ->
           team_name: session.team[0].toUpperCase() + session.team.substr(1)
           level_name: session.levelName
           session_id: session._id
-          ladder_url: "http://codecombat.com/play/ladder/#{session.levelID}#my-matches"
+          ladder_url: "https://codecombat.club/play/ladder/#{session.levelID}#my-matches"
           score_history_graph_url: getScoreHistoryGraphURL session, daysAgo
           defeat: defeatContext
           victory: victoryContext
           levelVersions: levelVersionsContext
       #log.info "Sending ladder update email to #{context.recipient.address} with #{context.email_data.wins} wins and #{context.email_data.losses} losses since #{daysAgo} day(s) ago."
-      sendwithus.api.send context, (err, result) ->
+      sendwithmailer.api.send context, (err, result) ->
         log.error "Error sending ladder update email: #{err} with result #{result}" if err
 
     urlForMatch = (match) ->
-      "http://codecombat.com/play/level/#{session.levelID}?team=#{session.team}&opponent=#{match.opponents[0].sessionID}"
+      "https://codecombat.club/play/level/#{session.levelID}?team=#{session.team}&opponent=#{match.opponents[0].sessionID}"
 
     onFetchedDefeatedOpponent = (err, defeatedOpponent) ->
       if err
@@ -727,7 +727,7 @@ module.exports.sendNextStepsEmail = sendNextStepsEmail = (user, now, daysAgo) ->
       # Used to use these categories to customize the email; not doing it right now. TODO: customize it again in Sendwithus.
       # TODO: do something with the preferredLanguage?
       context =
-        email_id: sendwithus.templates.next_steps_email
+        email_id: sendwithmailer.templates.next_steps_email
         recipient:
           address: if DEBUGGING then 'nick@codecombat.com' else user.get('email')
           name: name
@@ -735,13 +735,13 @@ module.exports.sendNextStepsEmail = sendNextStepsEmail = (user, now, daysAgo) ->
           name: name
           days_ago: daysAgo
           nextLevelName: nextLevel?.name
-          nextLevelLink: if nextLevel then "http://codecombat.com/play/level/#{nextLevel.slug}" else null
+          nextLevelLink: if nextLevel then "https://codecombat.club/play/level/#{nextLevel.slug}" else null
           secretLevelName: secretLevel.name
-          secretLevelLink: "http://codecombat.com/play/level/#{secretLevel.slug}"
+          secretLevelLink: "https://codecombat.club/play/level/#{secretLevel.slug}"
           levelsComplete: complete.length
           isCoursePlayer: user.get('courseInstances')?.length > 0 # TODO: use based on role instead, as courseInstances can be unreliable
       log.info "Sending next steps email to #{context.recipient.address} with #{context.email_data.nextLevelName} next and #{context.email_data.levelsComplete} levels complete since #{daysAgo} day(s) ago." if DEBUGGING
-      sendwithus.api.send context, (err, result) ->
+      sendwithmailer.api.send context, (err, result) ->
         log.error "Error sending next steps email: #{err} with result #{result}" if err
 
 ### End Next Steps Email ###

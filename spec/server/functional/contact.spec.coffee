@@ -1,5 +1,5 @@
 utils = require '../utils'
-sendwithus = require '../../../server/sendwithus'
+sendwithmailer = require '../../../server/sendwithmailer'
 request = require '../request'
 User = require '../../../server/models/User'
 
