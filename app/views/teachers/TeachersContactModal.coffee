@@ -33,12 +33,12 @@ module.exports = class TeachersContactModal extends ModalView
     name = if props.firstName and props.lastName then "#{props.firstName} #{props.lastName}" else me.get('name') ? ''
     email = me.get('email') or props.email or ''
     message = """
-        Hi CodeCombat! I want to learn more about the Classroom experience and get licenses so that my students can access Computer Science 2 and on.
+        你好! 我需要了解更多的课堂经验和获取课程授权来让学生开始学习课程。
 
-        Name of School #{props.nces_name or props.organization or ''}
-        Name of District: #{props.nces_district or props.district or ''}
-        Role: #{props.role or ''}
-        Phone Number: #{props.phoneNumber or ''}
+        学校名称 #{props.nces_name or props.organization or ''}
+        区县: #{props.nces_district or props.district or ''}
+        职务: #{props.role or ''}
+        电话号码: #{props.phoneNumber or ''}
       """
     @state.set('formValues', { name, email, message })
     super()

@@ -4,10 +4,10 @@ extends /templates/core/modal-base-flat
 
 block modal-header-content
   .text-center
-    h3 Contact Our Classroom Team
+    h3 联系我们的课程团队
 
 block modal-body-content
-  p Send us a message and our classroom success team will be in touch to help find the best solution for your students' needs!
+  p 给我们发送信息, 我们将很快帮助您解决问题!
   form
     - var sending = view.state.get('sendingState') === 'sending'
     - var sent = view.state.get('sendingState') === 'sent';
@@ -35,10 +35,10 @@ block modal-body-content
       textarea.form-control(name="message", tabindex=1 disabled=sending || sent)= values.message
 
     if view.state.get('sendingState') === 'error'
-      .alert.alert-danger Could not send message.
+      .alert.alert-danger 无法发送消息!?
 
     if sent
-      .alert.alert-success Message sent!
+      .alert.alert-success 信息发送成功!
 
     .text-right
       button#submit-btn.btn.btn-navy.btn-lg(type='submit' disabled=sending || sent) Submit
