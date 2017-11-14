@@ -87,7 +87,7 @@ module.exports = class PurchaseStarterLicensesModal extends ModalView
     stripeHandler.open
       amount: @state.get('quantityToBuy') * @state.get('centsPerStudent')
       description: "Starter course access for #{@state.get('quantityToBuy')} students"
-      bitcoin: true
+      bitcoin: if me.get('country') is 'china' or (me.get('preferredLanguage') or 'en-US')[...2] is 'zh' then false else true
       alipay: if me.get('country') is 'china' or (me.get('preferredLanguage') or 'en-US')[...2] is 'zh' then true else 'auto'
     
   onStripeReceivedToken: (e) ->

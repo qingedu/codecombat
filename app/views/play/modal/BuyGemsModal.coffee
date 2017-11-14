@@ -96,7 +96,7 @@ module.exports = class BuyGemsModal extends ModalView
       stripeHandler.open({
         description: $.t(@getProductDescription(product.get('name')))
         amount: product.get('amount')
-        bitcoin: true
+        bitcoin: if me.get('country') is 'china' or (me.get('preferredLanguage') or 'en-US')[...2] is 'zh' then false else true
         alipay: if me.get('country') is 'china' or (me.get('preferredLanguage') or 'en-US')[...2] is 'zh' then true else 'auto'
       })
 

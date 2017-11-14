@@ -43,7 +43,7 @@ module.exports = class InvoicesView extends RootView
     stripeHandler.open
       amount: @amount
       description: @description
-      bitcoin: true
+      bitcoin: if me.get('country') is 'china' or (me.get('preferredLanguage') or 'en-US')[...2] is 'zh' then false else true
       alipay: if me.get('country') is 'china' or (me.get('preferredLanguage') or 'en-US')[...2] is 'zh' then true else 'auto'
 
   onStripeReceivedToken: (e) ->
