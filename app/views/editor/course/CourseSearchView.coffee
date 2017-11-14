@@ -1,6 +1,6 @@
 SearchView = require 'views/common/SearchView'
 
-module.exports = class LevelSearchView extends SearchView
+module.exports = class CourseSearchView extends SearchView
   id: 'editor-course-home-view'
   modelLabel: 'Course'
   model: require 'models/Course'
@@ -8,7 +8,7 @@ module.exports = class LevelSearchView extends SearchView
   tableTemplate: require 'templates/editor/course/table'
   projection: ['slug', 'name', 'description', 'watchers', 'creator']
   page: 'course'
-  canMakeNew: false
+  canMakeNew: true
 
   getRenderData: ->
     context = super()
