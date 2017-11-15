@@ -1529,7 +1529,7 @@ module.exports = nativeDescription: "简体中文", englishDescription: "Chinese
     licenses_remaining: "剩余许可证"
     one_license_used: "1个许可证已被使用"
     num_licenses_used: "__numLicensesUsed__个许可证已被使用"
-#    starter_licenses: "starter licenses"
+    starter_licenses: "初学者授权"
     start_date: "起始日期："
     end_date: "结束日期："
     get_enrollments_blurb: " 我们会帮您解决您的班级、学校或地区的需求。"
