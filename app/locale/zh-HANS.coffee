@@ -233,7 +233,7 @@ module.exports = nativeDescription: "简体中文", englishDescription: "Chinese
     create_teacher_header: "创建老师账号"
     create_individual_header: "创建独立账号"
     email_announcements: "通过邮件接收新关卡和功能通知！"
-#    teacher_email_announcements: "Keep me updated on new teacher resources, curriculum, and courses!"
+    teacher_email_announcements: "当老师资源、教材和课程有更新的时候通知我！"
     creating: "账户创建中……"
     sign_up: "注册"
     log_in: "登录"
@@ -290,6 +290,7 @@ module.exports = nativeDescription: "简体中文", englishDescription: "Chinese
     confirm_individual_blurb: "记下这些信息，等会可能用得上。我们已在您的邮箱发送了验证邮件，验证后可用其重置密码！"
     write_this_down: "记下来："
     start_playing: "开玩！"
+    play_without_saving: "继续游戏（进度不保存）"
     sso_connected: "成功与以下账号连接："
     select_your_starting_hero: "选择你的起始英雄："
     you_can_always_change_your_hero_later: "之后你可以随时更换英雄。"
@@ -987,6 +988,11 @@ module.exports = nativeDescription: "简体中文", englishDescription: "Chinese
 
   teachers:
     licenses_needed: "需要许可"
+    message_sent_success: "信息发送成功!"
+    message_sent_failed: "无法发送消息!?"
+    contact_us: "联系我们的班级团队"
+    send_us_info: "给我们的团队发送信息, 我们将很快帮助您解决问题!"
+    submit: "提交"
 
   special_offer:
     special_offer: "特别优惠"

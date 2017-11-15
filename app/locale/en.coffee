@@ -292,6 +292,7 @@
     confirm_individual_blurb: "Write down your login information in case you need it later. Verify your email so you can recover your account if you ever forget your password - check your inbox!"
     write_this_down: "Write this down:"
     start_playing: "Start Playing!"
+    play_without_saving: "Play without saving"
     sso_connected: "Successfully connected with:"
     select_your_starting_hero: "Select Your Starting Hero:"
     you_can_always_change_your_hero_later: "You can always change your hero later."
@@ -1001,6 +1002,11 @@
 
   teachers:
     licenses_needed: "Licenses needed"
+    message_sent_success: "Message sent!"
+    message_sent_failed: "Could not send message."
+    contact_us: "Contact Our Classroom Team"
+    send_us_info: "Send us a message and our classroom success team will be in touch to help find the best solution for your students' needs!"
+    submit: "Submit"
 
   special_offer:
     special_offer: "Special Offer"
