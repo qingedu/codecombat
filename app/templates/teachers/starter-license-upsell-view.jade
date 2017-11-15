@@ -24,7 +24,7 @@ block content
         p.small(data-i18n="special_offer.great_for_clubs_description", data-i18n-options=JSON.stringify(view.i18nData()))
       .checkmark-blurb.col-xs-4.text-center
         span.fa.fa-check(aria-hidden=true)
-        h5(data-i18n='special_offer.low_price_title', data-i18n-options=JSON.stringify({ starterLicensePrice: '$' + view.state.get('dollarsPerStudent') }))
+        h5(data-i18n='special_offer.low_price_title', data-i18n-options=JSON.stringify({ starterLicensePrice: view.state.get('dollarsPerStudent') + '元' }))
         p.small(data-i18n="special_offer.low_price_description", data-i18n-options=JSON.stringify(view.i18nData()))
   
     .row.text-center.tall-margin-top
@@ -76,7 +76,7 @@ block content
           th
           th.special-offer-col
             i
-              b Special Offer
+              b(data-i18n="special_offer.special_offer")
           th
         tr
           th
@@ -134,7 +134,7 @@ block content
           td(data-i18n="special_offer.free")
           //- TODO: Do we localize prices at all?
           td.special-offer-col
-            span(data-i18n="special_offer.price_per_student", data-i18n-options=JSON.stringify({ price: '$' + view.state.get('dollarsPerStudent') }))
+            span(data-i18n="special_offer.price_per_student", data-i18n-options=JSON.stringify({ price: view.state.get('dollarsPerStudent') + '元' }))
           td(data-i18n="general.contact_us")
         tr
           th

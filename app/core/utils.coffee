@@ -418,7 +418,7 @@ getPrepaidCodeAmount = (price=0, users=0, months=0) ->
   total
 
 formatDollarValue = (dollars) ->
-  '$' + (parseFloat(dollars).toFixed(2))
+  (parseFloat(dollars).toFixed(2)) + '元'
 
 startsWithVowel = (s) -> s[0] in 'aeiouAEIOU'
 

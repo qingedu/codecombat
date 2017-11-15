@@ -4,7 +4,7 @@
 // mongo <address>:<port>/<database> <script file> -u <username> -p <password>
 
 function displayMoney(amount) {
-    return '$' + (amount / 100).toFixed(2);
+    return (amount / 100).toFixed(2) + '元';
 };
 
 var countries = ['brazil', 'china', 'israel'];
