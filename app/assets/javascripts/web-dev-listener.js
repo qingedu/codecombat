@@ -24,8 +24,10 @@ var goalStates;
 var createFailed;
 
 var allowedOrigins = [
-    /^https?:\/\/(.*\.)?codecombat\.com$/,
+    /^https?:\/\/(.*\.)?codecombat\.c[\w]+$/,
+    /^https?:\/\/(.*\.)?codelan\.cn$/,
     /^https?:\/\/localhost:[\d]+$/, // For local development
+    /^https?:\/\/127\.0\.0\.1:[\d]+$/, // For local development
     /^https?:\/\/10.0.2.2:[\d]+$/, // For local virtual machines
     /^https?:\/\/coco\.code\.ninja$/,
     /^https?:\/\/.*codecombat-staging-codecombat\.runnableapp\.com$/,
